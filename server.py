@@ -27,6 +27,7 @@ def log_something():
     logging.info(f"Received log: {message}")
     return {"status": "logged", "message": message}, 200
 
+# main function for setup of the logging server.`
 if __name__ == "__main__":
     logging.info("Starting server...")
     app.run(debug=True)
