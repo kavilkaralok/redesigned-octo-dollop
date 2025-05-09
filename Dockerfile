@@ -1,21 +1,23 @@
-# Use official Python image as base
+# Use official Python slim image
 FROM python:3.11-slim
 
-# Set working directory
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Copy app code and requirements
-COPY . /app
+# Copy all files into the container
+COPY . .
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Expose the port Flask runs on
+# Set environment variables
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=development
+ENV FLASK_RUN_PORT=5000
+
+# Expose port 5000 to outside world
 EXPOSE 5000
 
-# Environment variable to tell Flask to run in production mode
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-
-# Run the app using Gunicorn
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app"]
+# Run with Gunicorn (2 workers)
+CMD ["gunicorn", "--workers=2", "--bind=0.0.0.0:5000", "app:app"]
